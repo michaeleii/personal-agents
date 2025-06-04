@@ -1,3 +1,4 @@
+import { execSync } from "child_process";
 import fs from "fs";
 import path from "path";
 
@@ -43,7 +44,7 @@ function generateEnvSchema(envFilePath = ".env", outputPath = "src/env.ts") {
 
     // Write the schema file
     fs.writeFileSync(outputPath, schemaContent);
-
+    execSync(`bunx prettier --write "${outputPath}"`, { stdio: "inherit" });
     console.log(`✅ Generated env schema at ${outputPath}`);
     console.log(`📝 Found ${envVars.length} environment variables:`);
     envVars.forEach((varName) => console.log(`   - ${varName}`));
