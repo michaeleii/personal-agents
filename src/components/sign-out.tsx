@@ -2,7 +2,11 @@
 import { useRouter } from "next/navigation";
 import { Button } from "./ui/button";
 import { deleteUser, signOut } from "@/lib/auth-client";
-export default function SignOut({ isAnonymous }: { isAnonymous?: boolean }) {
+export default function SignOut({
+  isAnonymous,
+}: {
+  isAnonymous?: boolean | null;
+}) {
   const router = useRouter();
   return (
     <Button
@@ -10,9 +14,13 @@ export default function SignOut({ isAnonymous }: { isAnonymous?: boolean }) {
       onClick={async () => {
         if (isAnonymous) {
           await deleteUser({
-            callbackURL: "/login",
+            callbackURL: "/sign-in",
+            fetchOptions: {
+              onSuccess: () => {
+                router.refresh();
+              },
+            },
           });
-          router.refresh();
         }
         await signOut({
           fetchOptions: {

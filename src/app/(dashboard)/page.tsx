@@ -14,7 +14,7 @@ export default async function Home() {
   return (
     <div className="">
       <div className="">You are logged in as {session.user.name}</div>;
-      <SignOut />
+      <SignOut isAnonymous={session.user.isAnonymous} />
     </div>
   );
 }
