@@ -1,3 +1,20 @@
-export default function Home() {
-  return <div className=""></div>;
+import SignOut from "@/components/sign-out";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
+
+export default async function Home() {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  if (!session) {
+    redirect("/sign-in");
+  }
+  return (
+    <div className="">
+      <div className="">You are logged in as {session.user.name}</div>;
+      <SignOut />
+    </div>
+  );
 }
