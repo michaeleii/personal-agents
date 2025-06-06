@@ -1,4 +1,3 @@
-import SignOut from "@/components/sign-out";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
@@ -11,10 +10,5 @@ export default async function Home() {
   if (!session) {
     redirect("/sign-in");
   }
-  return (
-    <div className="">
-      <div className="">You are logged in as {session.user.name}</div>;
-      <SignOut isAnonymous={session.user.isAnonymous} />
-    </div>
-  );
+  return <div className="p-4"></div>;
 }
