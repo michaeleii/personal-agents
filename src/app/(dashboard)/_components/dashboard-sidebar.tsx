@@ -107,7 +107,7 @@ export default function DashboardSidebar({
                     asChild
                     isActive={pathname === item.href}
                     className={cn(
-                      "from-sidebar-accent via-sidebar/50 to-sidebar/50 h-10 border border-transparent from-5% via-30% transition-all hover:border-[#5D6B68]/10 hover:bg-linear-to-r/oklch data-[active=true]:border-[#5D6B68]/10 data-[active=true]:bg-linear-to-r/oklch"
+                      "from-sidebar-accent via-sidebar/50 to-sidebar/50 h-10 border border-transparent from-5% via-30% hover:border-[#5D6B68]/10 hover:bg-linear-to-r/oklch data-[active=true]:border-[#5D6B68]/10 data-[active=true]:bg-linear-to-r/oklch"
                     )}
                   >
                     <Link href={item.href}>
@@ -134,7 +134,7 @@ export default function DashboardSidebar({
                     asChild
                     isActive={pathname === item.href}
                     className={cn(
-                      "from-sidebar-accent via-sidebar/50 to-sidebar/50 h-10 border border-transparent from-5% via-30% transition-all hover:border-[#5D6B68]/10 hover:bg-linear-to-r/oklch data-[active=true]:border-[#5D6B68]/10 data-[active=true]:bg-linear-to-r/oklch"
+                      "from-sidebar-accent via-sidebar/50 to-sidebar/50 h-10 border border-transparent from-5% via-30% hover:border-[#5D6B68]/10 hover:bg-linear-to-r/oklch data-[active=true]:border-[#5D6B68]/10 data-[active=true]:bg-linear-to-r/oklch"
                     )}
                   >
                     <Link href={item.href}>
@@ -186,7 +186,7 @@ function DashboardUserButton({ user }: { user: UserWithAnonymous }) {
   if (isMobile) {
     return (
       <Drawer>
-        <DrawerTrigger className="focus-visible:border/10 flex w-full items-center justify-between gap-x-2 overflow-hidden rounded-lg p-3 transition-all hover:bg-white/10">
+        <DrawerTrigger className="flex w-full items-center justify-between gap-x-2 overflow-hidden rounded-lg p-3 hover:bg-white/10">
           {user.image ? (
             <Avatar>
               <AvatarImage src={user.image} />
@@ -238,7 +238,7 @@ function DashboardUserButton({ user }: { user: UserWithAnonymous }) {
   }
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className="focus-visible:border/10 flex w-full items-center justify-between gap-x-2 overflow-hidden rounded-lg p-3 transition-all hover:bg-white/10">
+      <DropdownMenuTrigger className="flex w-full items-center justify-between gap-x-2 overflow-hidden rounded-lg p-3 hover:bg-white/10">
         {user.image ? (
           <Avatar>
             <AvatarImage src={user.image} />
