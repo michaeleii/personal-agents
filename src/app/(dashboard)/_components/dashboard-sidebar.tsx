@@ -152,7 +152,7 @@ function DashboardUserButton({ user }: { user: UserWithAnonymous }) {
   const router = useRouter();
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className="focus-visible:border/10 flex w-full items-center justify-between overflow-hidden rounded-lg p-3 transition-all hover:bg-white/10">
+      <DropdownMenuTrigger className="focus-visible:border/10 flex w-full items-center justify-between gap-x-2 overflow-hidden rounded-lg p-3 transition-all hover:bg-white/10">
         {user.image ? (
           <Avatar>
             <AvatarImage src={user.image} />

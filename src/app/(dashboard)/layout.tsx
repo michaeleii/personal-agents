@@ -3,6 +3,7 @@ import type React from "react";
 import DashboardSidebar from "./_components/dashboard-sidebar";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
+import DashboardNavbar from "./_components/dashboard-navbar";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -15,7 +16,10 @@ export default async function Layout({ children }: LayoutProps) {
   return (
     <SidebarProvider>
       <DashboardSidebar user={session?.user} />
-      <main className="bg-muted flex min-h-dvh w-dvw flex-col">{children}</main>
+      <main className="bg-muted flex min-h-dvh w-dvw flex-col">
+        <DashboardNavbar />
+        {children}
+      </main>
     </SidebarProvider>
   );
 }
