@@ -152,7 +152,7 @@ function DashboardUserButton({ user }: { user: UserWithAnonymous }) {
   const router = useRouter();
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className="border-border/10 flex w-full items-center justify-between overflow-hidden rounded-lg border bg-white/5 p-3 transition-all hover:bg-white/10">
+      <DropdownMenuTrigger className="focus-visible:border/10 flex w-full items-center justify-between overflow-hidden rounded-lg p-3 transition-all hover:bg-white/5">
         {user.image ? (
           <Avatar>
             <AvatarImage src={user.image} />
@@ -172,23 +172,27 @@ function DashboardUserButton({ user }: { user: UserWithAnonymous }) {
         </div>
         <ChevronDownIcon className="size-4 shrink-0" />
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-72">
-        <DropdownMenuLabel>
+      <DropdownMenuContent
+        align="end"
+        className="border-border/10 text-sidebar-foreground w-[15rem] bg-[#132621]"
+      >
+        <DropdownMenuLabel className="text-sidebar-foreground">
           <div className="flex flex-col gap-1">
             <span className="truncate font-medium">{user.name}</span>
             {!user.isAnonymous && (
-              <span className="text-muted-foreground truncate text-sm font-normal">
+              <span className="text-sidebar-muted-foreground truncate text-sm font-normal">
                 {user.email}
               </span>
             )}
           </div>
         </DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem>
+        <DropdownMenuSeparator className="bg-sidebar-border/10" />
+        <DropdownMenuItem className="text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground">
           <CreditCardIcon className="size-4" />
           Billing
         </DropdownMenuItem>
         <DropdownMenuItem
+          className="text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
           onClick={async () => {
             if (user.isAnonymous) {
               await deleteUser({
