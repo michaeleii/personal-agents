@@ -152,7 +152,7 @@ function DashboardUserButton({ user }: { user: UserWithAnonymous }) {
   const router = useRouter();
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className="focus-visible:border/10 flex w-full items-center justify-between overflow-hidden rounded-lg p-3 transition-all hover:bg-white/5">
+      <DropdownMenuTrigger className="focus-visible:border/10 flex w-full items-center justify-between overflow-hidden rounded-lg p-3 transition-all hover:bg-white/10">
         {user.image ? (
           <Avatar>
             <AvatarImage src={user.image} />
@@ -187,12 +187,12 @@ function DashboardUserButton({ user }: { user: UserWithAnonymous }) {
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator className="bg-sidebar-border/10" />
-        <DropdownMenuItem className="text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground">
-          <CreditCardIcon className="size-4" />
+        <DropdownMenuItem className="text-sidebar-muted-foreground focus:text-sidebar-accent-foreground focus:bg-white/10">
+          <CreditCardIcon className="text-sidebar-muted-foreground size-4" />
           Billing
         </DropdownMenuItem>
         <DropdownMenuItem
-          className="text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+          className="text-sidebar-muted-foreground focus:text-sidebar-accent-foreground focus:bg-white/10"
           onClick={async () => {
             if (user.isAnonymous) {
               await deleteUser({
@@ -213,7 +213,7 @@ function DashboardUserButton({ user }: { user: UserWithAnonymous }) {
             });
           }}
         >
-          <LogOutIcon className="size-4" />
+          <LogOutIcon className="text-sidebar-muted-foreground size-4" />
           Log Out
         </DropdownMenuItem>
       </DropdownMenuContent>
