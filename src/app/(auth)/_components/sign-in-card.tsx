@@ -28,6 +28,7 @@ export default function SignInCard() {
             )}
           >
             <Button
+              variant="outline"
               className={cn("w-full gap-2")}
               disabled={isPending}
               onClick={async () => {
@@ -73,6 +74,7 @@ export default function SignInCard() {
               Sign in with Google
             </Button>
             <Button
+              variant="outline"
               className={cn("w-full gap-2")}
               disabled={isPending}
               onClick={async () => {
@@ -106,6 +108,7 @@ export default function SignInCard() {
               Sign in with Github
             </Button>
             <Button
+              variant="outline"
               className={cn("w-full gap-2")}
               disabled={isPending}
               onClick={async () => {
