@@ -32,9 +32,8 @@ export default function AgentForm({
   const queryClient = useQueryClient();
   const createAgent = useMutation(
     trpc.agents.create.mutationOptions({
-      onSuccess: () => {
+      onSuccess: async () => {
         queryClient.invalidateQueries(trpc.agents.getMany.queryOptions());
-
         if (initialValues?.id) {
           queryClient.invalidateQueries(
             trpc.agents.getOne.queryOptions({ id: initialValues.id })
@@ -50,9 +49,9 @@ export default function AgentForm({
 
   const form = useForm<AgentsInsert>({
     resolver: zodResolver(agentsInsertSchema),
-    defaultValues: initialValues ?? {
-      name: "",
-      instructions: "",
+    defaultValues: {
+      name: initialValues?.name ?? "",
+      instructions: initialValues?.instructions ?? "",
     },
   });
   const isEdit = !!initialValues?.id;

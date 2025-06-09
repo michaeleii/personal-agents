@@ -1,5 +1,4 @@
-import { getQueryClient, trpc } from "@/trpc/server";
-import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
+import { HydrateClient, prefetch, trpc } from "@/trpc/server";
 import AgentsView from "./view";
 import { Suspense } from "react";
 import { LoadingState } from "@/components/loading-state";
@@ -8,12 +7,11 @@ import { ErrorState } from "@/components/error-state";
 import AgentsListHeader from "./_components/agents-list-header";
 
 export default async function Page() {
-  const queryClient = getQueryClient();
-  void queryClient.prefetchQuery(trpc.agents.getMany.queryOptions());
+  prefetch(trpc.agents.getMany.queryOptions());
   return (
     <>
       <AgentsListHeader />
-      <HydrationBoundary state={dehydrate(queryClient)}>
+      <HydrateClient>
         <Suspense
           fallback={
             <LoadingState
@@ -33,7 +31,7 @@ export default async function Page() {
             <AgentsView />
           </ErrorBoundary>
         </Suspense>
-      </HydrationBoundary>
+      </HydrateClient>
     </>
   );
 }
