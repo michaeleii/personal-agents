@@ -1,12 +1,12 @@
 import { createAvatar } from "@dicebear/core";
-import { avataaarsNeutral, initials } from "@dicebear/collection";
+import { glass, initials } from "@dicebear/collection";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { cn } from "@/lib/utils";
 
 interface GeneratedAvatarProps {
   seed: string;
   className?: string;
-  variant: "avataaars-neutral" | "initials";
+  variant: "glass" | "initials";
 }
 export default function GeneratedAvatar({
   seed,
@@ -14,8 +14,8 @@ export default function GeneratedAvatar({
   className,
 }: GeneratedAvatarProps) {
   const avatar =
-    variant === "avataaars-neutral"
-      ? createAvatar(avataaarsNeutral, {
+    variant === "glass"
+      ? createAvatar(glass, {
           seed,
         })
       : createAvatar(initials, {

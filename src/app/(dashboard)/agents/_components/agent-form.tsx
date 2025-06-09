@@ -69,7 +69,7 @@ export default function AgentForm({
       <form className="space-y-4" onSubmit={form.handleSubmit(onSubmit)}>
         <GeneratedAvatar
           seed={form.watch("name")}
-          variant="avataaars-neutral"
+          variant="glass"
           className="size-16 border"
         />
         <FormField
