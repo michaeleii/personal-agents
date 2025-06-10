@@ -22,7 +22,7 @@ export default async function Page({ searchParams }: Props) {
         <Suspense
           fallback={
             <LoadingState
-              title="Loading Agents"
+              title="Loading Agent"
               description="This may take a few seconds..."
             />
           }
@@ -30,7 +30,7 @@ export default async function Page({ searchParams }: Props) {
           <ErrorBoundary
             fallback={
               <ErrorState
-                title="Failed to load agents"
+                title="Failed to load agent"
                 description="Please try again later"
               />
             }
