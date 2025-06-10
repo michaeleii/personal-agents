@@ -5,9 +5,16 @@ import { LoadingState } from "@/components/loading-state";
 import { ErrorBoundary } from "react-error-boundary";
 import { ErrorState } from "@/components/error-state";
 import AgentsListHeader from "./_components/agents-list-header";
+import type { SearchParams } from "nuqs";
+import { loadSearchParams } from "./_server/parsers";
 
-export default async function Page() {
-  prefetch(trpc.agents.getMany.queryOptions());
+interface Props {
+  searchParams: Promise<SearchParams>;
+}
+
+export default async function Page({ searchParams }: Props) {
+  const filters = await loadSearchParams(searchParams);
+  prefetch(trpc.agents.getMany.queryOptions({ ...filters }));
   return (
     <>
       <AgentsListHeader />
