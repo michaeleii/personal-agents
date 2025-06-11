@@ -28,13 +28,25 @@ export default function AgentForm({
   onCancel,
   onSuccess,
 }: AgentFormProps) {
+  const isEdit = !!initialValues?.id;
   const trpc = useTRPC();
   const queryClient = useQueryClient();
   const createAgent = useMutation(
     trpc.agents.create.mutationOptions({
       onSuccess: async () => {
         queryClient.invalidateQueries(trpc.agents.getMany.queryOptions({}));
-        if (initialValues?.id) {
+        onSuccess?.();
+      },
+      onError: (error) => {
+        toast.error(error.message);
+      },
+    })
+  );
+  const updateAgent = useMutation(
+    trpc.agents.update.mutationOptions({
+      onSuccess: async () => {
+        queryClient.invalidateQueries(trpc.agents.getMany.queryOptions({}));
+        if (isEdit) {
           queryClient.invalidateQueries(
             trpc.agents.getOne.queryOptions({ id: initialValues.id })
           );
@@ -54,11 +66,11 @@ export default function AgentForm({
       instructions: initialValues?.instructions ?? "",
     },
   });
-  const isEdit = !!initialValues?.id;
-  const isPending = createAgent.isPending;
+  const isPending = createAgent.isPending || updateAgent.isPending;
 
   function onSubmit(values: AgentsInsert) {
     if (isEdit) {
+      updateAgent.mutate({ ...values, id: initialValues.id });
     } else {
       createAgent.mutate(values);
     }
