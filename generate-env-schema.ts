@@ -30,7 +30,7 @@ function generateEnvSchema(envFilePath = ".env", outputPath = "src/env.ts") {
   import { z } from "zod";
   
   const envSchema = z.object({
-  ${envVars.map((varName) => `  ${varName}: z.string(),`).join("\n")}
+  ${envVars.map((varName) => `  ${varName}: z.string().min(1, "${varName} is required"),`).join("\n")}
   });
   
   export const env = envSchema.parse(process.env);
