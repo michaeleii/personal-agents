@@ -1,5 +1,5 @@
 import { db } from "@/db";
-import { meetings } from "@/db/schema";
+import { agents, meetings } from "@/db/schema";
 import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
 import {
   meetingIdSchema,
@@ -9,7 +9,7 @@ import {
   //   agentsUpdateSchema,
 } from "./schema";
 import { z } from "zod";
-import { and, desc, eq, ilike } from "drizzle-orm";
+import { and, desc, eq, getTableColumns, ilike } from "drizzle-orm";
 import {
   DEFAULT_PAGE,
   DEFAULT_PAGE_SIZE,
@@ -52,8 +52,12 @@ export const meetingsRouter = createTRPCRouter({
     .query(async ({ ctx, input }) => {
       const { page, pageSize, search } = input;
       const data = await db
-        .select()
+        .select({
+          ...getTableColumns(meetings),
+          agent: agents,
+        })
         .from(meetings)
+        .innerJoin(agents, eq(meetings.agentId, agents.id))
         .where(
           and(
             eq(meetings.userId, ctx.user.id),

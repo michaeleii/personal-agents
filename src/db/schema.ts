@@ -1,3 +1,4 @@
+import { meetingStatus } from "@/constants";
 import { pgTable, text, timestamp, boolean, pgEnum } from "drizzle-orm/pg-core";
 import { nanoid } from "nanoid";
 
@@ -75,13 +76,7 @@ export const agents = pgTable("agents", {
   updatedAt: timestamp().notNull().defaultNow(),
 });
 
-export const meetingStatus = pgEnum("meeting_status", [
-  "upcoming",
-  "active",
-  "completed",
-  "processing",
-  "cancelled",
-]);
+export const meetingStatusEnum = pgEnum("meeting_status", meetingStatus);
 
 export const meetings = pgTable("meetings", {
   id: text()
@@ -94,7 +89,7 @@ export const meetings = pgTable("meetings", {
   agentId: text()
     .notNull()
     .references(() => agents.id, { onDelete: "cascade" }),
-  status: meetingStatus().notNull().default("upcoming"),
+  status: meetingStatusEnum().notNull().default("upcoming"),
   startedAt: timestamp(),
   endedAt: timestamp(),
   transcriptUrl: text(),
