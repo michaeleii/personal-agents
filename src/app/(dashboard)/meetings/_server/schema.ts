@@ -10,6 +10,3 @@ export const meetingInsertSchema = z.object({
 });
 
 export const meetingUpdateSchema = meetingInsertSchema.merge(meetingIdSchema);
-
-export type MeetingsInsert = z.infer<typeof meetingInsertSchema>;
-export type MeetingUpdate = z.infer<typeof meetingUpdateSchema>;

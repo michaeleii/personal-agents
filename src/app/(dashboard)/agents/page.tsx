@@ -23,7 +23,7 @@ export default async function Page({ searchParams }: Props) {
     redirect("/sign-in");
   }
 
-  prefetch(trpc.agents.getMany.queryOptions({ ...filters }));
+  prefetch(trpc.agents.getMany.queryOptions(filters));
   return (
     <>
       <AgentsListHeader />

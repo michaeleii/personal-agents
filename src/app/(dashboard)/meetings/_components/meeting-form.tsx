@@ -1,6 +1,6 @@
 import { useTRPC } from "@/trpc/client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { meetingInsertSchema, type MeetingsInsert } from "../_server/schema";
+import { meetingInsertSchema } from "../_server/schema";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -15,7 +15,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import type { MeetingsGetOne } from "../_server/types";
+import type { MeetingsGetOne, MeetingsInsert } from "../_server/types";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import { CommandSelect } from "@/components/command-select";

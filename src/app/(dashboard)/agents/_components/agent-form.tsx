@@ -1,7 +1,7 @@
 import { useTRPC } from "@/trpc/client";
-import type { AgentsGetOne } from "../_server/types";
+import type { AgentsGetOne, AgentsInsert } from "../_server/types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { agentsInsertSchema, type AgentsInsert } from "../_server/schema";
+import { agentsInsertSchema } from "../_server/schema";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {

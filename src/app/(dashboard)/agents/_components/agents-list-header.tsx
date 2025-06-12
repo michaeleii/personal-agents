@@ -4,12 +4,13 @@ import { Button } from "@/components/ui/button";
 import { PlusIcon, SearchIcon, XCircleIcon } from "lucide-react";
 import { useState } from "react";
 import AgentForm from "./agent-form";
-import { useAgentsFilters } from "../_hooks/use-agent-filters";
 import { Input } from "@/components/ui/input";
 import { DEFAULT_PAGE } from "@/constants";
+import { useQueryStates } from "nuqs";
+import { agentsSearchParams } from "../_server/parsers";
 
 export default function AgentsListHeader() {
-  const [filters, setFilters] = useAgentsFilters();
+  const [filters, setFilters] = useQueryStates(agentsSearchParams);
   const [open, setOpen] = useState(false);
 
   function handleClearFilters() {

@@ -6,10 +6,17 @@ import { columns } from "./_components/columns";
 import { useRouter } from "next/navigation";
 import type { SingleMeetingsGetMany } from "./_server/types";
 import { EmptyState } from "@/components/empty-state";
+import { meetingsSearchParams } from "./_server/parsers";
+import { useQueryStates } from "nuqs";
+import { DataPagination } from "@/components/data-pagination";
 
 export default function MeetingsView() {
   const trpc = useTRPC();
-  const { data } = useSuspenseQuery(trpc.meetings.getMany.queryOptions({}));
+  const [filters, setFilters] = useQueryStates(meetingsSearchParams);
+
+  const { data } = useSuspenseQuery(
+    trpc.meetings.getMany.queryOptions(filters)
+  );
   const router = useRouter();
 
   function handleRowClick(row: SingleMeetingsGetMany) {
@@ -21,6 +28,11 @@ export default function MeetingsView() {
         data={data.items}
         columns={columns}
         onRowClick={handleRowClick}
+      />
+      <DataPagination
+        page={filters.page}
+        totalPages={data.totalPages}
+        onPageChange={(page) => setFilters({ page })}
       />
       {data.items.length === 0 && (
         <EmptyState

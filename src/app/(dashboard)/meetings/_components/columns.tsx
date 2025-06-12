@@ -3,47 +3,10 @@ import { format, formatDistance } from "date-fns";
 import type { ColumnDef } from "@tanstack/react-table";
 import type { SingleMeetingsGetMany } from "../_server/types";
 import GeneratedAvatar from "@/components/generated-avatar";
-import {
-  CircleCheckIcon,
-  CircleXIcon,
-  ClockArrowUpIcon,
-  ClockFadingIcon,
-  CornerDownRightIcon,
-  LoaderIcon,
-  type LucideIcon,
-} from "lucide-react";
+import { ClockFadingIcon, CornerDownRightIcon } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import type { MeetingStatus } from "@/constants";
 import { cn } from "@/lib/utils";
-
-const statusMap: Record<
-  MeetingStatus,
-  {
-    icon: LucideIcon;
-    color: string;
-  }
-> = {
-  upcoming: {
-    icon: ClockArrowUpIcon,
-    color: "bg-yellow-500/20 text-yellow-800 border-yellow-800/5",
-  },
-  active: {
-    icon: LoaderIcon,
-    color: "bg-blue-500/20 text-blue-800 border-blue-800/5",
-  },
-  completed: {
-    icon: CircleCheckIcon,
-    color: "bg-emerald-500/20 text-emerald-800 border-emerald-800/5",
-  },
-  processing: {
-    icon: LoaderIcon,
-    color: "bg-gray-300/20 text-gray-800 border-gray-800/5",
-  },
-  cancelled: {
-    icon: CircleXIcon,
-    color: "bg-rose-500/20 text-rose-800 border-rose-800/5",
-  },
-};
+import { statusMap } from "@/constants";
 
 export const columns: ColumnDef<SingleMeetingsGetMany>[] = [
   {

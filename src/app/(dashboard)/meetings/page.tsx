@@ -8,9 +8,14 @@ import MeetingsListHeader from "./_components/meetings-list-header";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-
-export default async function Page() {
-  prefetch(trpc.meetings.getMany.queryOptions({}));
+import type { SearchParams } from "nuqs";
+import { loadSearchParams } from "./_server/parsers";
+interface Props {
+  searchParams: Promise<SearchParams>;
+}
+export default async function Page({ searchParams }: Props) {
+  const filters = await loadSearchParams(searchParams);
+  prefetch(trpc.meetings.getMany.queryOptions(filters));
   const session = await auth.api.getSession({ headers: await headers() });
 
   if (!session) {

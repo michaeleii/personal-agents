@@ -10,6 +10,3 @@ export const agentIdSchema = z.object({
 });
 
 export const agentsUpdateSchema = agentsInsertSchema.merge(agentIdSchema);
-
-export type AgentsInsert = z.infer<typeof agentsInsertSchema>;
-export type AgentsUpdate = z.infer<typeof agentsUpdateSchema>;
