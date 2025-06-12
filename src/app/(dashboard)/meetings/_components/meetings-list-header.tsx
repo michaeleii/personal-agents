@@ -14,7 +14,7 @@ import { meetingStatus } from "@/constants";
 import { useTRPC } from "@/trpc/client";
 import { useQuery } from "@tanstack/react-query";
 import GeneratedAvatar from "@/components/generated-avatar";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
 const options = meetingStatus.map((status) => {
   const Icon = statusMap[status].icon;
@@ -107,7 +107,7 @@ export default function MeetingsListHeader() {
               onSelect={(value) =>
                 setFilters({ status: value as MeetingStatus })
               }
-              value={filters.status ?? ""}
+              value={filters.status}
             />
             <CommandSelect
               className="h-9"
@@ -124,6 +124,7 @@ export default function MeetingsListHeader() {
               </Button>
             )}
           </div>
+          <ScrollBar orientation="horizontal" />
         </ScrollArea>
       </div>
     </>

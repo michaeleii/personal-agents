@@ -1,4 +1,4 @@
-import { DEFAULT_PAGE } from "@/constants";
+import { DEFAULT_PAGE, meetingStatus } from "@/constants";
 import {
   createLoader,
   parseAsInteger,
@@ -6,14 +6,12 @@ import {
   parseAsStringEnum,
 } from "nuqs/server";
 
-import type { MeetingStatus } from "./types";
-
 export const meetingsSearchParams = {
   search: parseAsString.withDefault("").withOptions({ clearOnDefault: true }),
   page: parseAsInteger
     .withDefault(DEFAULT_PAGE)
     .withOptions({ clearOnDefault: true }),
-  status: parseAsStringEnum<MeetingStatus | "">([])
+  status: parseAsStringEnum([...meetingStatus, ""])
     .withDefault("")
     .withOptions({
       clearOnDefault: true,

@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { DEFAULT_PAGE } from "@/constants";
 import { useQueryStates } from "nuqs";
 import { agentsSearchParams } from "../_server/parsers";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
 export default function AgentsListHeader() {
   const [filters, setFilters] = useQueryStates(agentsSearchParams);
@@ -40,24 +41,26 @@ export default function AgentsListHeader() {
             <span>New Agent</span>
           </Button>
         </div>
-
-        <div className="flex items-center gap-x-2 p-1">
-          <div className="relative">
-            <Input
-              placeholder="Filter by name"
-              className="h-9 w-[200px] bg-white pl-7"
-              value={filters.search}
-              onChange={(e) => setFilters({ search: e.target.value })}
-            />
-            <SearchIcon className="text-muted-foreground absolute top-1/2 left-2 size-4 -translate-y-1/2" />
+        <ScrollArea>
+          <div className="flex items-center gap-x-2 p-1">
+            <div className="relative">
+              <Input
+                placeholder="Filter by name"
+                className="h-9 w-[200px] bg-white pl-7"
+                value={filters.search}
+                onChange={(e) => setFilters({ search: e.target.value })}
+              />
+              <SearchIcon className="text-muted-foreground absolute top-1/2 left-2 size-4 -translate-y-1/2" />
+            </div>
+            {filters.search.length > 0 && (
+              <Button onClick={handleClearFilters} variant="outline" size="sm">
+                <XCircleIcon />
+                <span>Clear</span>
+              </Button>
+            )}
           </div>
-          {filters.search.length > 0 && (
-            <Button onClick={handleClearFilters} variant="outline" size="sm">
-              <XCircleIcon />
-              <span>Clear</span>
-            </Button>
-          )}
-        </div>
+          <ScrollBar orientation="horizontal" />
+        </ScrollArea>
       </div>
     </>
   );
