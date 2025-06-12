@@ -3,12 +3,13 @@ import { z } from "zod";
 export const meetingIdSchema = z.object({
   id: z.string().min(1, "Id is required"),
 });
-// export const agentsInsertSchema = z.object({
-//   name: z.string().min(1, "Name is required"),
-//   instructions: z.string().min(1, "Instructions is required"),
-// });
 
-// export const agentsUpdateSchema = agentsInsertSchema.merge(meetingIdSchema);
+export const meetingInsertSchema = z.object({
+  name: z.string().min(1, "Name is required"),
+  agentId: z.string().min(1, "Agent is required"),
+});
 
-// export type AgentsInsert = z.infer<typeof agentsInsertSchema>;
-// export type AgentsUpdate = z.infer<typeof agentsUpdateSchema>;
+export const meetingUpdateSchema = meetingInsertSchema.merge(meetingIdSchema);
+
+export type MeetingsInsert = z.infer<typeof meetingInsertSchema>;
+export type MeetingUpdate = z.infer<typeof meetingUpdateSchema>;

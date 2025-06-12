@@ -7,6 +7,9 @@ import { ErrorState } from "@/components/error-state";
 import AgentsListHeader from "./_components/agents-list-header";
 import type { SearchParams } from "nuqs";
 import { loadSearchParams } from "./_server/parsers";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 
 interface Props {
   searchParams: Promise<SearchParams>;
@@ -14,6 +17,12 @@ interface Props {
 
 export default async function Page({ searchParams }: Props) {
   const filters = await loadSearchParams(searchParams);
+  const session = await auth.api.getSession({ headers: await headers() });
+
+  if (!session) {
+    redirect("/sign-in");
+  }
+
   prefetch(trpc.agents.getMany.queryOptions({ ...filters }));
   return (
     <>

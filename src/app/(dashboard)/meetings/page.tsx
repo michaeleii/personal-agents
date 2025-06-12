@@ -4,30 +4,42 @@ import { ErrorState } from "@/components/error-state";
 import { ErrorBoundary } from "react-error-boundary";
 import { LoadingState } from "@/components/loading-state";
 import { Suspense } from "react";
+import MeetingsListHeader from "./_components/meetings-list-header";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 
-export default function Page() {
+export default async function Page() {
   prefetch(trpc.meetings.getMany.queryOptions({}));
+  const session = await auth.api.getSession({ headers: await headers() });
+
+  if (!session) {
+    redirect("/sign-in");
+  }
   return (
-    <HydrateClient>
-      <Suspense
-        fallback={
-          <LoadingState
-            title="Loading Meetings"
-            description="This may take a few seconds..."
-          />
-        }
-      >
-        <ErrorBoundary
+    <>
+      <MeetingsListHeader />
+      <HydrateClient>
+        <Suspense
           fallback={
-            <ErrorState
-              title="Failed to load meetings"
-              description="Please try again later"
+            <LoadingState
+              title="Loading Meetings"
+              description="This may take a few seconds..."
             />
           }
         >
-          <MeetingsView />
-        </ErrorBoundary>
-      </Suspense>
-    </HydrateClient>
+          <ErrorBoundary
+            fallback={
+              <ErrorState
+                title="Failed to load meetings"
+                description="Please try again later"
+              />
+            }
+          >
+            <MeetingsView />
+          </ErrorBoundary>
+        </Suspense>
+      </HydrateClient>
+    </>
   );
 }

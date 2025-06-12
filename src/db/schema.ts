@@ -84,7 +84,9 @@ export const meetingStatus = pgEnum("meeting_status", [
 ]);
 
 export const meetings = pgTable("meetings", {
-  id: text().$defaultFn(() => nanoid()),
+  id: text()
+    .primaryKey()
+    .$defaultFn(() => nanoid()),
   name: text().notNull(),
   userId: text()
     .notNull()
