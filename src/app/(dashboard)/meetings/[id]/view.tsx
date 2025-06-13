@@ -7,7 +7,6 @@ import {
   useSuspenseQuery,
 } from "@tanstack/react-query";
 import MeetingForm from "../_components/meeting-form";
-import GeneratedAvatar from "@/components/generated-avatar";
 import {
   Breadcrumb,
   BreadcrumbList,
@@ -23,16 +22,20 @@ import {
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
 import {
+  BanIcon,
   ChevronRightIcon,
   MoreVerticalIcon,
   PencilIcon,
   Trash2Icon,
+  VideoIcon,
 } from "lucide-react";
 import { useState } from "react";
 import Link from "next/link";
 import { useConfirm } from "@/hooks/use-confirm";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import type { MeetingStatus } from "../_server/types";
+import { EmptyState } from "@/components/empty-state";
 
 interface Props {
   id: string;
@@ -67,6 +70,75 @@ export default function MeetingView({ id }: Props) {
     if (!ok) return;
     await deleteMeeting.mutateAsync({ id });
   }
+
+  function handleCancelMeeting() {}
+  const isCancelling = false;
+
+  const statusCompMap: Record<MeetingStatus, React.ReactNode> = {
+    active: (
+      <div className="flex flex-col items-center justify-center gap-y-8 rounded-lg bg-white px-4 py-5">
+        <EmptyState
+          src="/upcoming.svg"
+          title="Meeting is active"
+          description="Meeting will end once all participants leave"
+        />
+        <div className="flex w-full flex-col-reverse items-center gap-2 lg:flex-row lg:justify-center">
+          <Button asChild className="w-full lg:w-auto">
+            <Link href={`/call/${meeting.id}`}>
+              <VideoIcon />
+              Join meeting
+            </Link>
+          </Button>
+        </div>
+      </div>
+    ),
+    cancelled: (
+      <div className="flex flex-col items-center justify-center gap-y-8 rounded-lg bg-white px-4 py-5">
+        <EmptyState
+          src="/cancelled.svg"
+          title="Meeting is cancelled"
+          description="The meeting was cancelled"
+        />
+      </div>
+    ),
+    processing: (
+      <div className="flex flex-col items-center justify-center gap-y-8 rounded-lg bg-white px-4 py-5">
+        <EmptyState
+          src="/processing.svg"
+          title="Meeting is completed"
+          description="A summary of the meeting will appear soon"
+        />
+      </div>
+    ),
+    completed: <div>Completed</div>,
+    upcoming: (
+      <div className="flex flex-col items-center justify-center gap-y-8 rounded-lg bg-white px-4 py-5">
+        <EmptyState
+          src="/upcoming.svg"
+          title="Not started yet"
+          description="Meeting will end once all participants leave"
+        />
+        <div className="flex w-full flex-col-reverse items-center gap-2 lg:flex-row lg:justify-center">
+          <Button
+            onClick={handleCancelMeeting}
+            disabled={isCancelling}
+            asChild
+            className="w-full lg:w-auto"
+            variant="secondary"
+          >
+            <BanIcon />
+            Cancel meeting
+          </Button>
+          <Button disabled={isCancelling} asChild className="w-full lg:w-auto">
+            <Link href={`/call/${meeting.id}`}>
+              <VideoIcon />
+              Start meeting
+            </Link>
+          </Button>
+        </div>
+      </div>
+    ),
+  };
 
   return (
     <>
@@ -126,24 +198,7 @@ export default function MeetingView({ id }: Props) {
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
-        <div className="rounded-lg border bg-white">
-          <div className="col-span-5 flex flex-col gap-y-5 px-4 py-5">
-            <div className="flex items-center gap-x-3">
-              <GeneratedAvatar
-                variant="glass"
-                seed={meeting.name}
-                className="size-10"
-              />
-              <h2 className="text-2xl font-medium capitalize">
-                {meeting.agent.name}
-              </h2>
-            </div>
-            <div className="flex flex-col gap-y-4">
-              <p className="text-lg font-medium">Instructions</p>
-              <p className="text-neutral-800">{meeting.agent.instructions}</p>
-            </div>
-          </div>
-        </div>
+        {statusCompMap[meeting.status]}
       </div>
     </>
   );
