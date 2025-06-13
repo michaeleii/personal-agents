@@ -105,7 +105,7 @@ export function AgentIdView({ id }: Props) {
                   asChild
                   className="text-foreground text-xl font-medium capitalize"
                 >
-                  <Link href={`/agents${id}`}>{agent.name}</Link>
+                  <Link href={`/agents/${id}`}>{agent.name}</Link>
                 </BreadcrumbLink>
               </BreadcrumbItem>
             </BreadcrumbList>

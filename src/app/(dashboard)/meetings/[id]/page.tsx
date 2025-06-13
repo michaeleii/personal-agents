@@ -4,6 +4,9 @@ import { HydrateClient, prefetch, trpc } from "@/trpc/server";
 import { Suspense } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import MeetingView from "./view";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -12,6 +15,12 @@ interface Props {
 export default async function Page({ params }: Props) {
   const { id } = await params;
   prefetch(trpc.meetings.getOne.queryOptions({ id }));
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+  if (!session) {
+    redirect("/sign-in");
+  }
   return (
     <HydrateClient>
       <Suspense

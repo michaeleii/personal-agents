@@ -23,8 +23,12 @@ export const meetingsRouter = createTRPCRouter({
     .query(async ({ ctx, input }) => {
       const { id } = input;
       const existingMeeting = await db
-        .select()
+        .select({
+          ...getTableColumns(meetings),
+          agent: agents,
+        })
         .from(meetings)
+        .innerJoin(agents, eq(meetings.agentId, agents.id))
         .where(and(eq(meetings.id, id), eq(meetings.userId, ctx.user.id)))
         .then((res) => res.at(0));
 
@@ -110,20 +114,23 @@ export const meetingsRouter = createTRPCRouter({
       }
       return updatedMeeting;
     }),
-  //   delete: protectedProcedure
-  //     .input(agentIdSchema)
-  //     .mutation(async ({ ctx, input }) => {
-  //       const { user } = ctx;
-  //       const { id } = input;
-  //       const deletedAgent = await db
-  //         .delete(agents)
-  //         .where(and(eq(agents.id, id), eq(agents.userId, user.id)))
-  //         .returning()
-  //         .then((res) => res.at(0));
+  delete: protectedProcedure
+    .input(meetingIdSchema)
+    .mutation(async ({ ctx, input }) => {
+      const { user } = ctx;
+      const { id } = input;
+      const deletedMeeting = await db
+        .delete(meetings)
+        .where(and(eq(meetings.id, id), eq(meetings.userId, user.id)))
+        .returning()
+        .then((res) => res.at(0));
 
-  //       if (!deletedAgent) {
-  //         throw new TRPCError({ code: "NOT_FOUND", message: "Agent not found" });
-  //       }
-  //       return deletedAgent;
-  //     }),
+      if (!deletedMeeting) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Meeting not found",
+        });
+      }
+      return deletedMeeting;
+    }),
 });
