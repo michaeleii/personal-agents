@@ -16,12 +16,12 @@ interface Props {
 }
 
 export default async function Page({ searchParams }: Props) {
-  const filters = await loadSearchParams(searchParams);
   const session = await auth.api.getSession({ headers: await headers() });
 
   if (!session) {
     redirect("/sign-in");
   }
+  const filters = await loadSearchParams(searchParams);
 
   prefetch(trpc.agents.getMany.queryOptions(filters));
   return (

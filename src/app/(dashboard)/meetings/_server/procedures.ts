@@ -16,8 +16,30 @@ import {
   MIN_PAGE_SIZE,
 } from "@/constants";
 import { TRPCError } from "@trpc/server";
+import { stream } from "@/lib/stream";
+import { generateAvatarURI } from "@/lib/utils";
 
 export const meetingsRouter = createTRPCRouter({
+  generateToken: protectedProcedure.mutation(async ({ ctx }) => {
+    const { user } = ctx;
+    await stream.upsertUsers([
+      {
+        id: user.id,
+        name: user.name,
+        role: "admin",
+        image: user?.image || generateAvatarURI("initials", user.name),
+      },
+    ]);
+    const expirationDate = Math.floor(Date.now() / 1000) + 3600; // 1 hour
+    const issuedAt = Math.floor(Date.now() / 1000) - 60;
+    const token = stream.generateUserToken({
+      user_id: user.id,
+      exp: expirationDate,
+      validity_in_seconds: issuedAt,
+    });
+
+    return token;
+  }),
   getOne: protectedProcedure
     .input(meetingIdSchema)
     .query(async ({ ctx, input }) => {
@@ -86,11 +108,65 @@ export const meetingsRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const { user } = ctx;
       const { name, agentId } = input;
-      return await db
+      const existingAgent = await db
+        .select()
+        .from(agents)
+        .where(eq(agents.id, agentId))
+        .then((res) => res.at(0));
+
+      if (!existingAgent) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Agent not found",
+        });
+      }
+
+      if (existingAgent.userId !== user.id) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message:
+            "You do not have permission to create a meeting with this agent",
+        });
+      }
+
+      const createdMeeting = await db
         .insert(meetings)
         .values({ name, userId: user.id, agentId })
         .returning()
         .then((res) => res[0]);
+
+      const call = stream.video.call("default", createdMeeting.id);
+      await call.create({
+        data: {
+          created_by_id: user.id,
+          custom: {
+            meetingId: createdMeeting.id,
+            meetingName: createdMeeting.name,
+          },
+          settings_override: {
+            transcription: {
+              language: "en",
+              mode: "auto-on",
+              closed_caption_mode: "auto-on",
+            },
+            recording: {
+              mode: "auto-on",
+              quality: "1080p",
+            },
+          },
+        },
+      });
+
+      await stream.upsertUsers([
+        {
+          id: existingAgent.id,
+          name: existingAgent.name,
+          role: "user",
+          image: generateAvatarURI("glass", existingAgent.name),
+        },
+      ]);
+
+      return createdMeeting;
     }),
   update: protectedProcedure
     .input(meetingUpdateSchema)
