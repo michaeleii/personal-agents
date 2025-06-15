@@ -31,11 +31,9 @@ export const meetingsRouter = createTRPCRouter({
       },
     ]);
     const expirationDate = Math.floor(Date.now() / 1000) + 3600; // 1 hour
-    const issuedAt = Math.floor(Date.now() / 1000) - 60;
     const token = stream.generateUserToken({
       user_id: user.id,
       exp: expirationDate,
-      validity_in_seconds: issuedAt,
     });
 
     return token;
