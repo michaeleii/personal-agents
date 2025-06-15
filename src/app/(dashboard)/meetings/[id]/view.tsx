@@ -122,7 +122,6 @@ export default function MeetingView({ id }: Props) {
           <Button
             onClick={handleCancelMeeting}
             disabled={isCancelling}
-            asChild
             className="w-full lg:w-auto"
             variant="secondary"
           >

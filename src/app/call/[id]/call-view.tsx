@@ -29,7 +29,6 @@ import {
 
 import "@stream-io/video-react-sdk/dist/css/styles.css";
 import { generateAvatarURI } from "@/lib/utils";
-import { env } from "@/env";
 import { Button } from "@/components/ui/button";
 
 interface Props {
@@ -53,7 +52,7 @@ export default function CallView({ id, user }: Props) {
 
   useEffect(() => {
     const _client = new StreamVideoClient({
-      apiKey: env.NEXT_PUBLIC_STREAM_API_KEY,
+      apiKey: process.env.NEXT_PUBLIC_STREAM_API_KEY ?? "",
       user: {
         id: user.id,
         name: user.name,
@@ -87,12 +86,6 @@ export default function CallView({ id, user }: Props) {
   }, [meeting.id, client]);
 
   const [show, setShow] = useState<"lobby" | "call" | "ended">("lobby");
-  const { useCameraState, useMicrophoneState } = useCallStateHooks();
-  const mic = useMicrophoneState();
-  const camera = useCameraState();
-
-  const hasMediaPermissions =
-    mic.hasBrowserPermission && camera.hasBrowserPermission;
 
   async function handleJoin() {
     if (!call) return;
@@ -105,31 +98,35 @@ export default function CallView({ id, user }: Props) {
     setShow("ended");
   }
 
-  function DisabledVideoPreview() {
-    return (
-      <DefaultVideoPlaceholder
-        participant={
-          {
-            name: user.name,
-            image: user.image ?? generateAvatarURI("initials", user.name),
-          } as StreamVideoParticipant
-        }
-      />
-    );
-  }
+  function Lobby() {
+    const { useCameraState, useMicrophoneState } = useCallStateHooks();
+    const { hasBrowserPermission: hasMicPermission } = useMicrophoneState();
+    const { hasBrowserPermission: hasCameraPermission } = useCameraState();
 
-  function AllowMediaPermissions() {
-    return (
-      <p className="text-sm">
-        Please grant your browser a permission to access your camera and
-        microphone.
-      </p>
-    );
-  }
+    const hasMediaPermissions = hasMicPermission && hasCameraPermission;
+    function DisabledVideoPreview() {
+      return (
+        <DefaultVideoPlaceholder
+          participant={
+            {
+              name: user.name,
+              image: user.image ?? generateAvatarURI("initials", user.name),
+            } as StreamVideoParticipant
+          }
+        />
+      );
+    }
 
-  const showMap: Record<LobbyState, React.ReactNode> = {
-    lobby: (
-      <div className="from-sidebar-accent to-sidebar flex h-full flex-col items-center justify-center bg-radial">
+    function AllowMediaPermissions() {
+      return (
+        <p className="text-sm">
+          Please grant your browser a permission to access your camera and
+          microphone.
+        </p>
+      );
+    }
+    return (
+      <div className="from-sidebar-accent to-sidebar flex h-dvh flex-col items-center justify-center bg-radial">
         <div className="flex flex-1 items-center justify-center px-8 py-4">
           <div className="bg-background flex flex-col items-center justify-center gap-y-6 rounded-lg p-10 shadow-sm">
             <div className="flex flex-col gap-y-2 text-center">
@@ -159,7 +156,11 @@ export default function CallView({ id, user }: Props) {
           </div>
         </div>
       </div>
-    ),
+    );
+  }
+
+  const showMap: Record<LobbyState, React.ReactNode> = {
+    lobby: <Lobby />,
     call: (
       <div className="flex h-full flex-col justify-between p-4 text-white">
         <div className="flex items-center gap-4 rounded-full bg-[#101213] p-4">
