@@ -12,3 +12,11 @@ export type SingleMeetingsGetMany =
 export type MeetingsInsert = z.infer<typeof meetingInsertSchema>;
 export type MeetingUpdate = z.infer<typeof meetingUpdateSchema>;
 export type MeetingStatus = (typeof meetingStatus)[number];
+
+export interface StreamTranscriptItem {
+  speaker_id: string;
+  type: string;
+  text: string;
+  start_ts: number;
+  stop_ts: number;
+}
