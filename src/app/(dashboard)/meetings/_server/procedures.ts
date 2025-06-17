@@ -28,48 +28,45 @@ export const meetingsRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const { user } = ctx;
       const { meetingId } = input;
-      try {
-        const existingMeeting = await db
-          .select({
-            ...getTableColumns(meetings),
-            agent: {
-              id: agents.id,
-              name: agents.name,
-              instructions: agents.instructions,
-              voice: agents.voice,
-            },
-          })
-          .from(meetings)
-          .innerJoin(agents, eq(meetings.agentId, agents.id))
-          .where(and(eq(meetings.id, meetingId), eq(meetings.userId, user.id)))
-          .then((res) => res[0]);
+      const existingMeeting = await db
+        .select({
+          ...getTableColumns(meetings),
+          agent: {
+            id: agents.id,
+            name: agents.name,
+            instructions: agents.instructions,
+            voice: agents.voice,
+          },
+        })
+        .from(meetings)
+        .innerJoin(agents, eq(meetings.agentId, agents.id))
+        .where(and(eq(meetings.id, meetingId), eq(meetings.userId, user.id)))
+        .then((res) => res.at(0));
 
-        if (!existingMeeting) {
-          throw new TRPCError({
-            code: "NOT_FOUND",
-            message: "Meeting not found",
-          });
-        }
-
-        await db
-          .update(meetings)
-          .set({
-            status: "active",
-            startedAt: new Date(),
-          })
-          .where(
-            and(
-              eq(meetings.id, existingMeeting.id),
-              eq(meetings.userId, user.id)
-            )
-          );
-        const call = stream.video.call("default", meetingId);
-        const realtimeClient = await stream.video.connectOpenAi({
-          call,
-          openAiApiKey: env.OPENAI_API_KEY,
-          agentUserId: existingMeeting.agent.id,
+      if (!existingMeeting) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Meeting not found",
         });
-        realtimeClient.updateSession({
+      }
+
+      await db
+        .update(meetings)
+        .set({
+          status: "active",
+          startedAt: new Date(),
+        })
+        .where(
+          and(eq(meetings.id, existingMeeting.id), eq(meetings.userId, user.id))
+        );
+      const call = stream.video.call("default", meetingId);
+      const realtimeClient = await stream.video.connectOpenAi({
+        call,
+        openAiApiKey: env.OPENAI_API_KEY,
+        agentUserId: existingMeeting.agent.id,
+      });
+      try {
+        realtimeClient?.updateSession({
           instructions: existingMeeting.agent.instructions,
           voice: existingMeeting.agent.voice,
         });
