@@ -65,16 +65,10 @@ export const meetingsRouter = createTRPCRouter({
         openAiApiKey: env.OPENAI_API_KEY,
         agentUserId: existingMeeting.agent.id,
       });
-      try {
-        realtimeClient?.updateSession({
-          instructions: existingMeeting.agent.instructions,
-          voice: existingMeeting.agent.voice,
-        });
-      } catch (error) {
-        if (error instanceof Error) {
-          console.error(error.message);
-        }
-      }
+      realtimeClient?.updateSession({
+        instructions: existingMeeting.agent.instructions,
+        voice: existingMeeting.agent.voice,
+      });
     }),
   generateChatToken: protectedProcedure.mutation(async ({ ctx }) => {
     const token = streamChat.createToken(ctx.user.id);
