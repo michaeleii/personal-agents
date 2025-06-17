@@ -39,7 +39,7 @@ export default async function Page({ params }: Props) {
             />
           }
         >
-          <MeetingView id={id} />
+          <MeetingView id={id} user={session.user} />
         </ErrorBoundary>
       </Suspense>
     </HydrateClient>

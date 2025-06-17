@@ -8,6 +8,7 @@ import { eq, inArray } from "drizzle-orm";
 import type { TextMessage } from "@inngest/agent-kit";
 import { createAgent, openai } from "@inngest/agent-kit";
 import { env } from "@/env";
+import { generateAvatarURI } from "@/lib/utils";
 
 const summarizer = createAgent({
   name: "Summarizer",
@@ -67,6 +68,7 @@ export const meetingsProcessing = inngest.createFunction(
         .then((agents) =>
           agents.map((agent) => ({
             ...agent,
+            image: generateAvatarURI("glass", agent.name),
           }))
         );
       const speakers = [...userSpeakers, ...agentSpeakers];
@@ -79,6 +81,7 @@ export const meetingsProcessing = inngest.createFunction(
             ...item,
             user: {
               name: "Unknown",
+              image: generateAvatarURI("initials", "Unknown"),
             },
           };
         }
@@ -87,6 +90,7 @@ export const meetingsProcessing = inngest.createFunction(
           ...item,
           user: {
             name: speaker.name,
+            image: speaker.image,
           },
         };
       });
