@@ -48,7 +48,8 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
   const eventType = (payload as Record<string, unknown>)?.type;
-
+  console.log("Received event:", eventType);
+  console.log("Payload:", payload);
   switch (eventType) {
     case "call.session_started": {
       const event = payload as CallSessionStartedEvent;
@@ -99,6 +100,11 @@ export async function POST(req: NextRequest) {
       realtimeClient.updateSession({
         instructions: existingMeeting.agent.instructions,
         voice: existingMeeting.agent.voice,
+      });
+      console.log("Connected to OpenAI for meeting:", existingMeeting.id);
+      console.log({
+        voice: existingMeeting.agent.voice,
+        instructions: existingMeeting.agent.instructions,
       });
       break;
     }
@@ -293,6 +299,8 @@ export async function POST(req: NextRequest) {
       }
       break;
     }
+    default:
+      break;
   }
 
   return NextResponse.json({ status: "ok" });
