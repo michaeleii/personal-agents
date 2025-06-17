@@ -28,41 +28,42 @@ export const meetingsRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const { user } = ctx;
       const { meetingId } = input;
-
-      const existingMeeting = await db
-        .select({
-          ...getTableColumns(meetings),
-          agent: {
-            id: agents.id,
-            name: agents.name,
-            instructions: agents.instructions,
-            voice: agents.voice,
-          },
-        })
-        .from(meetings)
-        .innerJoin(agents, eq(meetings.agentId, agents.id))
-        .where(and(eq(meetings.id, meetingId), eq(meetings.userId, user.id)))
-        .then((res) => res.at(0));
-
-      if (!existingMeeting) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: "Meeting not found",
-        });
-      }
-
-      await db
-        .update(meetings)
-        .set({
-          status: "active",
-          startedAt: new Date(),
-        })
-        .where(
-          and(eq(meetings.id, existingMeeting.id), eq(meetings.userId, user.id))
-        );
-
-      const call = stream.video.call("default", meetingId);
       try {
+        const existingMeeting = await db
+          .select({
+            ...getTableColumns(meetings),
+            agent: {
+              id: agents.id,
+              name: agents.name,
+              instructions: agents.instructions,
+              voice: agents.voice,
+            },
+          })
+          .from(meetings)
+          .innerJoin(agents, eq(meetings.agentId, agents.id))
+          .where(and(eq(meetings.id, meetingId), eq(meetings.userId, user.id)))
+          .then((res) => res.at(0));
+
+        if (!existingMeeting) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Meeting not found",
+          });
+        }
+
+        await db
+          .update(meetings)
+          .set({
+            status: "active",
+            startedAt: new Date(),
+          })
+          .where(
+            and(
+              eq(meetings.id, existingMeeting.id),
+              eq(meetings.userId, user.id)
+            )
+          );
+        const call = stream.video.call("default", meetingId);
         const realtimeClient = await stream.video.connectOpenAi({
           call,
           openAiApiKey: env.OPENAI_API_KEY,
@@ -74,10 +75,7 @@ export const meetingsRouter = createTRPCRouter({
         });
       } catch (error) {
         if (error instanceof Error) {
-          throw new TRPCError({
-            code: "INTERNAL_SERVER_ERROR",
-            message: error.message,
-          });
+          console.error(error.message);
         }
       }
     }),
