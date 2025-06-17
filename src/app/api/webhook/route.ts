@@ -96,8 +96,10 @@ export async function POST(req: NextRequest) {
         agentUserId: existingAgent.id,
       });
       realtimeClient.updateSession({
-        instructions: existingAgent.instructions,
         voice: existingAgent.voice,
+      });
+      realtimeClient.updateSession({
+        instructions: existingAgent.instructions,
       });
       break;
     }
