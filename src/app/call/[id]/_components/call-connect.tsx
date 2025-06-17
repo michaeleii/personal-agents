@@ -80,6 +80,7 @@ export default function CallConnect({
       <StreamTheme className="h-dvh">
         <StreamCall call={call}>
           <CallUI
+            meetingId={meetingId}
             meetingName={meetingName}
             userImage={userImage}
             userName={userName}

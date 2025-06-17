@@ -1,5 +1,4 @@
 import type {
-  CallSessionStartedEvent,
   CallSessionParticipantLeftEvent,
   CallEndedEvent,
   CallTranscriptionReadyEvent,
@@ -11,8 +10,7 @@ import { db } from "@/db";
 import { agents, meetings } from "@/db/schema";
 import { stream, streamChat } from "@/lib/stream";
 import { NextResponse, type NextRequest } from "next/server";
-import { and, eq, getTableColumns } from "drizzle-orm";
-import { env } from "@/env";
+import { and, eq } from "drizzle-orm";
 import { inngest } from "@/inngest/client";
 
 import OpenAI from "openai";
@@ -49,62 +47,7 @@ export async function POST(req: NextRequest) {
   }
   const eventType = (payload as Record<string, unknown>)?.type;
   console.log("Received event:", eventType);
-  console.log("Payload:", payload);
-  if (eventType === "call.session_started") {
-    const event = payload as CallSessionStartedEvent;
-    const meetingId = event.call.custom?.meetingId as string;
-
-    if (!meetingId) {
-      return NextResponse.json({ error: "Missing meetingId" }, { status: 400 });
-    }
-    const existingMeeting = await db
-      .select({
-        ...getTableColumns(meetings),
-        agent: {
-          id: agents.id,
-          name: agents.name,
-          instructions: agents.instructions,
-          voice: agents.voice,
-        },
-      })
-      .from(meetings)
-      .innerJoin(agents, eq(meetings.agentId, agents.id))
-      .where(eq(meetings.id, meetingId))
-      .then((res) => res.at(0));
-
-    console.log("Existing meeting:", existingMeeting);
-
-    if (existingMeeting === undefined) {
-      return NextResponse.json({ error: "Meeting not found" }, { status: 404 });
-    }
-
-    await db
-      .update(meetings)
-      .set({
-        status: "active",
-        startedAt: new Date(),
-      })
-      .where(eq(meetings.id, existingMeeting.id));
-
-    const call = stream.video.call("default", meetingId);
-    const realtimeClient = await stream.video.connectOpenAi({
-      call,
-      openAiApiKey: env.OPENAI_API_KEY,
-      agentUserId: existingMeeting.agent.id,
-    });
-    console.log("Connected to OpenAI for meeting:", existingMeeting.id);
-    realtimeClient.updateSession({
-      instructions: existingMeeting.agent.instructions,
-    });
-    console.log(
-      "Updated agent instructions:",
-      existingMeeting.agent.instructions
-    );
-    realtimeClient.updateSession({
-      voice: existingMeeting.agent.voice,
-    });
-    console.log("Updated agent voice:", existingMeeting.agent.voice);
-  } else if (eventType === "call.session_participant_left") {
+  if (eventType === "call.session_participant_left") {
     const event = payload as CallSessionParticipantLeftEvent;
     const meetingId = event.call_cid.split(":")[1];
 

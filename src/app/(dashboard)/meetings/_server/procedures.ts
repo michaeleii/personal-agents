@@ -20,8 +20,58 @@ import { stream, streamChat } from "@/lib/stream";
 import { generateAvatarURI } from "@/lib/utils";
 import JSONL from "jsonl-parse-stringify";
 import type { StreamTranscriptItem } from "./types";
+import { env } from "@/env";
 
 export const meetingsRouter = createTRPCRouter({
+  connectAIToCall: protectedProcedure
+    .input(z.object({ meetingId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const { user } = ctx;
+      const { meetingId } = input;
+
+      const existingMeeting = await db
+        .select({
+          ...getTableColumns(meetings),
+          agent: {
+            id: agents.id,
+            name: agents.name,
+            instructions: agents.instructions,
+            voice: agents.voice,
+          },
+        })
+        .from(meetings)
+        .innerJoin(agents, eq(meetings.agentId, agents.id))
+        .where(and(eq(meetings.id, meetingId), eq(meetings.userId, user.id)))
+        .then((res) => res.at(0));
+
+      if (!existingMeeting) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Meeting not found",
+        });
+      }
+
+      await db
+        .update(meetings)
+        .set({
+          status: "active",
+          startedAt: new Date(),
+        })
+        .where(
+          and(eq(meetings.id, existingMeeting.id), eq(meetings.userId, user.id))
+        );
+
+      const call = stream.video.call("default", meetingId);
+      const realtimeClient = await stream.video.connectOpenAi({
+        call,
+        openAiApiKey: env.OPENAI_API_KEY,
+        agentUserId: existingMeeting.agent.id,
+      });
+      realtimeClient.updateSession({
+        instructions: existingMeeting.agent.instructions,
+        voice: existingMeeting.agent.voice,
+      });
+    }),
   generateChatToken: protectedProcedure.mutation(async ({ ctx }) => {
     const token = streamChat.createToken(ctx.user.id);
     await streamChat.upsertUser({
