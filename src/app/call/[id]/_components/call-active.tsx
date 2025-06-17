@@ -12,7 +12,7 @@ export default function CallActive({ meetingName, onLeave }: Props) {
       <div className="flex items-center gap-4 rounded-full bg-[#101213] p-4">
         <Link
           href="/"
-          className="flex w-fit items-center justify-center rounded-full bg-white/10 p-1"
+          className="flex w-fit items-center justify-center rounded-full bg-white/10 p-2 px-4"
         >
           <span className="text-white">Personal Agents</span>
         </Link>
