@@ -84,6 +84,8 @@ export default function AgentForm({
       createAgent.mutate(values);
     }
   }
+
+  const agentVoice = form.watch("voice");
   return (
     <Form {...form}>
       <form className="space-y-4" onSubmit={form.handleSubmit(onSubmit)}>
@@ -129,7 +131,7 @@ export default function AgentForm({
               <FormLabel>Voice</FormLabel>
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
-                  <SelectTrigger>
+                  <SelectTrigger className="capitalize">
                     <SelectValue placeholder="Choose your agent's voice" />
                   </SelectTrigger>
                 </FormControl>
@@ -149,6 +151,15 @@ export default function AgentForm({
             </FormItem>
           )}
         />
+        {agentVoice && (
+          <audio controls>
+            <source
+              src={`/voices/${agentVoice}-preview.wav`}
+              type="audio/wav"
+            />
+            Your browser does not support the audio element.
+          </audio>
+        )}
         <div className="flex justify-between gap-x-2">
           {onCancel && (
             <Button
