@@ -9,7 +9,7 @@ export default async function Page() {
   });
 
   if (session?.user) {
-    redirect("/");
+    redirect("/meetings");
   }
 
   return (
