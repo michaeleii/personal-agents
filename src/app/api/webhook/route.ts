@@ -72,6 +72,8 @@ export async function POST(req: NextRequest) {
       .where(eq(meetings.id, meetingId))
       .then((res) => res.at(0));
 
+    console.log("Existing meeting:", existingMeeting);
+
     if (!existingMeeting) {
       return NextResponse.json({ error: "Meeting not found" }, { status: 404 });
     }
