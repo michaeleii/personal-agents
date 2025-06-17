@@ -29,17 +29,8 @@ export const meetingsRouter = createTRPCRouter({
       const { user } = ctx;
       const { meetingId } = input;
       const existingMeeting = await db
-        .select({
-          ...getTableColumns(meetings),
-          agent: {
-            id: agents.id,
-            name: agents.name,
-            instructions: agents.instructions,
-            voice: agents.voice,
-          },
-        })
+        .select()
         .from(meetings)
-        .innerJoin(agents, eq(meetings.agentId, agents.id))
         .where(and(eq(meetings.id, meetingId), eq(meetings.userId, user.id)))
         .then((res) => res.at(0));
 
@@ -59,15 +50,28 @@ export const meetingsRouter = createTRPCRouter({
         .where(
           and(eq(meetings.id, existingMeeting.id), eq(meetings.userId, user.id))
         );
+
+      const existingAgent = await db
+        .select()
+        .from(agents)
+        .where(eq(agents.id, existingMeeting.agentId))
+        .then((res) => res.at(0));
+
+      if (!existingAgent) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Agent not found",
+        });
+      }
       const call = stream.video.call("default", meetingId);
       const realtimeClient = await stream.video.connectOpenAi({
         call,
         openAiApiKey: env.OPENAI_API_KEY,
-        agentUserId: existingMeeting.agent.id,
+        agentUserId: existingAgent.id,
       });
-      realtimeClient?.updateSession({
-        instructions: existingMeeting.agent.instructions,
-        voice: existingMeeting.agent.voice,
+      realtimeClient.updateSession({
+        instructions: existingAgent.instructions,
+        voice: existingAgent.voice,
       });
     }),
   generateChatToken: protectedProcedure.mutation(async ({ ctx }) => {
