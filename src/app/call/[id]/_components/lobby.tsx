@@ -1,5 +1,4 @@
 import { Button } from "@/components/ui/button";
-import { generateAvatarURI } from "@/lib/utils";
 import {
   DefaultVideoPlaceholder,
   ToggleAudioPreviewButton,
@@ -12,10 +11,11 @@ import type { User } from "better-auth";
 import { LogInIcon } from "lucide-react";
 import Link from "next/link";
 interface Props {
-  user: User;
+  userName: User["name"];
+  userImage: string;
   onJoin?: () => void;
 }
-export default function Lobby({ user, onJoin }: Props) {
+export default function Lobby({ userName, userImage, onJoin }: Props) {
   const { useCameraState, useMicrophoneState } = useCallStateHooks();
   const { hasBrowserPermission: hasMicPermission } = useMicrophoneState();
   const { hasBrowserPermission: hasCameraPermission } = useCameraState();
@@ -26,8 +26,8 @@ export default function Lobby({ user, onJoin }: Props) {
       <DefaultVideoPlaceholder
         participant={
           {
-            name: user.name,
-            image: user.image ?? generateAvatarURI("initials", user.name),
+            name: userName,
+            image: userImage,
           } as StreamVideoParticipant
         }
       />

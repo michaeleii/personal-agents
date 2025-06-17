@@ -1,5 +1,3 @@
-import type { MeetingsGetOne } from "@/app/(dashboard)/meetings/_server/types";
-import type { User } from "better-auth";
 import "@stream-io/video-react-sdk/dist/css/styles.css";
 import { useMutation } from "@tanstack/react-query";
 import { useTRPC } from "@/trpc/client";
@@ -12,16 +10,24 @@ import {
   StreamVideoClient,
   type Call,
 } from "@stream-io/video-react-sdk";
-import { generateAvatarURI } from "@/lib/utils";
 import { LoaderIcon } from "lucide-react";
 import CallUI from "./call-ui";
 
 interface Props {
-  meeting: MeetingsGetOne;
-  user: User;
+  meetingId: string;
+  meetingName: string;
+  userId: string;
+  userName: string;
+  userImage: string;
 }
 
-export default function CallConnect({ meeting, user }: Props) {
+export default function CallConnect({
+  meetingId,
+  meetingName,
+  userId,
+  userName,
+  userImage,
+}: Props) {
   const trpc = useTRPC();
   const { mutateAsync: generateToken } = useMutation(
     trpc.meetings.generateToken.mutationOptions()
@@ -31,9 +37,9 @@ export default function CallConnect({ meeting, user }: Props) {
     const _client = new StreamVideoClient({
       apiKey: process.env.NEXT_PUBLIC_STREAM_API_KEY!,
       user: {
-        id: user.id,
-        name: user.name,
-        image: user.image ?? generateAvatarURI("initials", user.name),
+        id: userId,
+        name: userName,
+        image: userImage,
       },
       tokenProvider: generateToken,
     });
@@ -42,12 +48,12 @@ export default function CallConnect({ meeting, user }: Props) {
       _client.disconnectUser();
       setClient(undefined);
     };
-  }, [generateToken, user.id, user.name, user.image]);
+  }, [generateToken, userId, userName, userImage]);
   const [call, setCall] = useState<Call>();
 
   useEffect(() => {
     if (!client) return;
-    const _call = client.call("default", meeting.id);
+    const _call = client.call("default", meetingId);
     _call.camera.disable();
     _call.microphone.disable();
     setCall(_call);
@@ -59,7 +65,7 @@ export default function CallConnect({ meeting, user }: Props) {
         setCall(undefined);
       }
     };
-  }, [meeting.id, client]);
+  }, [meetingId, client]);
 
   if (!client || !call) {
     return (
@@ -73,7 +79,11 @@ export default function CallConnect({ meeting, user }: Props) {
     <StreamVideo client={client}>
       <StreamTheme className="h-dvh">
         <StreamCall call={call}>
-          <CallUI meeting={meeting} user={user} />
+          <CallUI
+            meetingName={meetingName}
+            userImage={userImage}
+            userName={userName}
+          />
         </StreamCall>
       </StreamTheme>
     </StreamVideo>

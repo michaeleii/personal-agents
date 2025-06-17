@@ -7,6 +7,7 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import CallView from "./call-view";
+import { generateAvatarURI } from "@/lib/utils";
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -40,7 +41,15 @@ const Page = async ({ params }: Props) => {
             />
           }
         >
-          <CallView id={id} user={session.user} />
+          <CallView
+            id={id}
+            userId={session.user.id}
+            userImage={
+              session.user.image ??
+              generateAvatarURI("initials", session.user.name)
+            }
+            userName={session.user.name}
+          />
         </ErrorBoundary>
       </Suspense>
     </HydrateClient>

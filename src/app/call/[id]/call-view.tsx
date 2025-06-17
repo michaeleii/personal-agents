@@ -2,16 +2,16 @@
 import { ErrorState } from "@/components/error-state";
 import { useTRPC } from "@/trpc/client";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import type { User } from "better-auth";
-
-import CallProvider from "./_components/call-provider";
+import CallConnect from "./_components/call-connect";
 
 interface Props {
   id: string;
-  user: User;
+  userName: string;
+  userImage: string;
+  userId: string;
 }
 
-export default function CallView({ id, user }: Props) {
+export default function CallView({ id, userId, userImage, userName }: Props) {
   const trpc = useTRPC();
   const { data: meeting } = useSuspenseQuery(
     trpc.meetings.getOne.queryOptions({ id })
@@ -28,5 +28,13 @@ export default function CallView({ id, user }: Props) {
     );
   }
 
-  return <CallProvider meeting={meeting} user={user} />;
+  return (
+    <CallConnect
+      meetingId={meeting.id}
+      meetingName={meeting.name}
+      userId={userId}
+      userName={userName}
+      userImage={userImage}
+    />
+  );
 }

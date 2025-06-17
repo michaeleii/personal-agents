@@ -1,21 +1,18 @@
-import type { MeetingsGetOne } from "@/app/(dashboard)/meetings/_server/types";
 import { useCall } from "@stream-io/video-react-sdk";
 import { useState } from "react";
 import EndedCall from "./ended-call";
 import Lobby from "./lobby";
-import type { User } from "better-auth";
 import CallActive from "./call-active";
 
 interface Props {
-  meeting: MeetingsGetOne;
-  user: User;
+  meetingName: string;
+  userName: string;
+  userImage: string;
 }
 
-type ShowState = "lobby" | "call" | "ended";
-
-export default function CallUI({ meeting, user }: Props) {
+export default function CallUI({ meetingName, userImage, userName }: Props) {
   const call = useCall();
-  const [show, setShow] = useState<ShowState>("lobby");
+  const [show, setShow] = useState<"lobby" | "call" | "ended">("lobby");
 
   async function handleJoin() {
     if (!call) return;
@@ -28,13 +25,11 @@ export default function CallUI({ meeting, user }: Props) {
     call.endCall();
     setShow("ended");
   };
-  return (
-    <>
-      {show === "lobby" && <Lobby user={user} onJoin={handleJoin} />}
-      {show === "call" && (
-        <CallActive meeting={meeting} onLeave={handleLeave} />
-      )}
-      {show === "ended" && <EndedCall />}
-    </>
+  return show === "lobby" ? (
+    <Lobby userName={userName} userImage={userImage} onJoin={handleJoin} />
+  ) : show === "call" ? (
+    <CallActive meetingName={meetingName} onLeave={handleLeave} />
+  ) : (
+    <EndedCall />
   );
 }
