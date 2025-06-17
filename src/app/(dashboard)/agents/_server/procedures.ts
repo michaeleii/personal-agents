@@ -75,10 +75,10 @@ export const agentsRouter = createTRPCRouter({
     .input(agentsInsertSchema)
     .mutation(async ({ ctx, input }) => {
       const { user } = ctx;
-      const { name, instructions } = input;
+      const { name, instructions, voice } = input;
       return await db
         .insert(agents)
-        .values({ name, instructions, userId: user.id })
+        .values({ name, instructions, voice, userId: user.id })
         .returning()
         .then((res) => res[0]);
     }),

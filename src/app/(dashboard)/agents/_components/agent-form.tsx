@@ -74,7 +74,7 @@ export default function AgentForm({
     defaultValues: {
       name: initialValues?.name ?? "",
       instructions: initialValues?.instructions ?? "",
-      voice: initialValues?.voice ?? "",
+      voice: initialValues?.voice ?? "alloy",
     },
   });
   const isPending = createAgent.isPending || updateAgent.isPending;
@@ -91,9 +91,6 @@ export default function AgentForm({
 
   useEffect(() => {
     if (!audioRef.current) return;
-    if (agentVoice === "") {
-      audioRef.current.src = "";
-    }
     audioRef.current.src = `/voices/${agentVoice}-preview.wav`;
   }, [agentVoice]);
   return (
