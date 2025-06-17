@@ -1,4 +1,4 @@
-import { meetingStatus } from "@/constants";
+import { meetingStatus, agentVoices } from "@/constants";
 import { pgTable, text, timestamp, boolean, pgEnum } from "drizzle-orm/pg-core";
 import { nanoid } from "nanoid";
 
@@ -62,7 +62,7 @@ export const verification = pgTable("verification", {
     () => /* @__PURE__ */ new Date()
   ),
 });
-
+export const agentVoiceEnum = pgEnum("agent_voice", agentVoices);
 export const agents = pgTable("agents", {
   id: text()
     .primaryKey()
@@ -72,6 +72,7 @@ export const agents = pgTable("agents", {
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
   instructions: text().notNull(),
+  voice: agentVoiceEnum().notNull().default("alloy"),
   createdAt: timestamp().notNull().defaultNow(),
   updatedAt: timestamp().notNull().defaultNow(),
 });

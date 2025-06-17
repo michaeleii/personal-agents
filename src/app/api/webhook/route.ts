@@ -97,6 +97,7 @@ export async function POST(req: NextRequest) {
       });
       realtimeClient.updateSession({
         instructions: existingAgent.instructions,
+        voice: existingAgent.voice,
       });
       break;
     }

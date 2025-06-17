@@ -17,6 +17,14 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { agentVoices } from "@/constants";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface AgentFormProps {
   onSuccess?: () => void;
@@ -64,6 +72,7 @@ export default function AgentForm({
     defaultValues: {
       name: initialValues?.name ?? "",
       instructions: initialValues?.instructions ?? "",
+      voice: initialValues?.voice ?? "",
     },
   });
   const isPending = createAgent.isPending || updateAgent.isPending;
@@ -108,6 +117,34 @@ export default function AgentForm({
                   placeholder="You are a helpful math assistant that can help answer math questions and help with assignments."
                 />
               </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          name="voice"
+          control={form.control}
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Voice</FormLabel>
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Choose your agent's voice" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {agentVoices.map((voice) => (
+                    <SelectItem
+                      className="capitalize"
+                      key={voice}
+                      value={voice}
+                    >
+                      {voice}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
               <FormMessage />
             </FormItem>
           )}

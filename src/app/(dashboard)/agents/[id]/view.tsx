@@ -153,6 +153,10 @@ export function AgentIdView({ id }: Props) {
               <p className="text-lg font-medium">Instructions</p>
               <p className="text-neutral-800">{agent.instructions}</p>
             </div>
+            <div className="flex flex-col gap-y-4">
+              <p className="text-lg font-medium">Voice</p>
+              <p className="text-neutral-800 capitalize">{agent.voice}</p>
+            </div>
           </div>
         </div>
       </div>

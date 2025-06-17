@@ -21,6 +21,17 @@ export const meetingStatus = [
   "cancelled",
 ] as const;
 
+export const agentVoices = [
+  "alloy",
+  "ash",
+  "ballad",
+  "coral",
+  "echo",
+  "sage",
+  "shimmer",
+  "verse",
+] as const;
+
 export const statusMap: Record<
   MeetingStatus,
   {
