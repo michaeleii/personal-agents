@@ -97,10 +97,10 @@ export async function POST(req: NextRequest) {
         agentUserId: existingMeeting.agent.id,
       });
       realtimeClient.updateSession({
-        instructions: existingMeeting.agent.instructions,
+        voice: existingMeeting.agent.voice,
       });
       realtimeClient.updateSession({
-        voice: existingMeeting.agent.voice,
+        instructions: existingMeeting.agent.instructions,
       });
       break;
     }
