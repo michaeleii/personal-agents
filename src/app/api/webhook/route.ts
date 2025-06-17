@@ -98,6 +98,7 @@ export async function POST(req: NextRequest) {
       realtimeClient.updateSession({
         instructions: existingAgent.instructions,
       });
+      break;
     }
     case "call.session_participant_left": {
       const event = payload as CallSessionParticipantLeftEvent;
@@ -131,6 +132,7 @@ export async function POST(req: NextRequest) {
           endedAt: new Date(),
         })
         .where(and(eq(meetings.id, meetingId), eq(meetings.status, "active")));
+      break;
     }
     case "call.transcription_ready": {
       const event = payload as CallTranscriptionReadyEvent;
@@ -142,7 +144,6 @@ export async function POST(req: NextRequest) {
           { status: 400 }
         );
       }
-
       const updatedMeeting = await db
         .update(meetings)
         .set({
@@ -162,9 +163,10 @@ export async function POST(req: NextRequest) {
         name: "meetings/processing",
         data: {
           meetingId: updatedMeeting.id,
-          transcriptUrl: updatedMeeting.userId,
+          transcriptUrl: updatedMeeting.transcriptUrl,
         },
       });
+      break;
     }
     case "call.recording_ready": {
       const event = payload as CallRecordingReadyEvent;
@@ -185,6 +187,7 @@ export async function POST(req: NextRequest) {
         .where(eq(meetings.id, meetingId))
         .returning()
         .then((res) => res.at(0));
+      break;
     }
     case "message.new": {
       const event = payload as MessageNewEvent;
@@ -285,6 +288,7 @@ export async function POST(req: NextRequest) {
           },
         });
       }
+      break;
     }
   }
 

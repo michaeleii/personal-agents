@@ -41,7 +41,8 @@ export const meetingsProcessing = inngest.createFunction(
   { event: "meetings/processing" },
   async ({ event, step }) => {
     const text = await step.run("fetch-transcript", async () => {
-      return fetch(event.data.transcriptUrl).then((res) => res.text());
+      const res = await fetch(event.data.transcriptUrl);
+      return res.text();
     });
 
     const transcript = await step.run("parse-transcript", async () => {
