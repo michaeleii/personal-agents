@@ -273,10 +273,10 @@ function DashboardUserButton({ user }: { user: UserWithAnonymous }) {
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator className="bg-sidebar-border/10" />
-        <DropdownMenuItem className="text-sidebar-muted-foreground focus:text-sidebar-accent-foreground focus:bg-white/10">
+        {/* <DropdownMenuItem className="text-sidebar-muted-foreground focus:text-sidebar-accent-foreground focus:bg-white/10">
           <CreditCardIcon className="text-sidebar-muted-foreground size-4" />
           Billing
-        </DropdownMenuItem>
+        </DropdownMenuItem> */}
         <DropdownMenuItem
           className="text-sidebar-muted-foreground focus:text-sidebar-accent-foreground focus:bg-white/10"
           onClick={onLogout}
