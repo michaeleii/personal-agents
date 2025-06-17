@@ -28,7 +28,7 @@ export default function CallUI({
   async function handleJoin() {
     if (!call) return;
     await call.join();
-    await connectAIToCall({ meetingId });
+    connectAIToCall({ meetingId });
     setShow("call");
   }
 
