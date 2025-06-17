@@ -25,6 +25,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useEffect, useRef } from "react";
 
 interface AgentFormProps {
   onSuccess?: () => void;
@@ -37,6 +38,7 @@ export default function AgentForm({
   onSuccess,
 }: AgentFormProps) {
   const isEdit = !!initialValues?.id;
+  const audioRef = useRef<HTMLAudioElement | null>(null);
   const trpc = useTRPC();
   const queryClient = useQueryClient();
   const createAgent = useMutation(
@@ -86,6 +88,14 @@ export default function AgentForm({
   }
 
   const agentVoice = form.watch("voice");
+
+  useEffect(() => {
+    if (!audioRef.current) return;
+    if (agentVoice === "") {
+      audioRef.current.src = "";
+    }
+    audioRef.current.src = `/voices/${agentVoice}-preview.wav`;
+  }, [agentVoice]);
   return (
     <Form {...form}>
       <form className="space-y-4" onSubmit={form.handleSubmit(onSubmit)}>
@@ -152,7 +162,7 @@ export default function AgentForm({
           )}
         />
         {agentVoice && (
-          <audio controls>
+          <audio ref={audioRef} controls>
             <source
               src={`/voices/${agentVoice}-preview.wav`}
               type="audio/wav"
