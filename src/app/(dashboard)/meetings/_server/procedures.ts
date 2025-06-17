@@ -62,15 +62,24 @@ export const meetingsRouter = createTRPCRouter({
         );
 
       const call = stream.video.call("default", meetingId);
-      const realtimeClient = await stream.video.connectOpenAi({
-        call,
-        openAiApiKey: env.OPENAI_API_KEY,
-        agentUserId: existingMeeting.agent.id,
-      });
-      realtimeClient.updateSession({
-        instructions: existingMeeting.agent.instructions,
-        voice: existingMeeting.agent.voice,
-      });
+      try {
+        const realtimeClient = await stream.video.connectOpenAi({
+          call,
+          openAiApiKey: env.OPENAI_API_KEY,
+          agentUserId: existingMeeting.agent.id,
+        });
+        realtimeClient.updateSession({
+          instructions: existingMeeting.agent.instructions,
+          voice: existingMeeting.agent.voice,
+        });
+      } catch (error) {
+        if (error instanceof Error) {
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: error.message,
+          });
+        }
+      }
     }),
   generateChatToken: protectedProcedure.mutation(async ({ ctx }) => {
     const token = streamChat.createToken(ctx.user.id);
