@@ -72,7 +72,7 @@ export const agents = pgTable("agents", {
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
   instructions: text().notNull(),
-  voice: agentVoiceEnum().notNull().default("alloy"),
+  voice: agentVoiceEnum().notNull(),
   createdAt: timestamp().notNull().defaultNow(),
   updatedAt: timestamp().notNull().defaultNow(),
 });
