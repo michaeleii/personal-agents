@@ -11,7 +11,7 @@ import { db } from "@/db";
 import { agents, meetings } from "@/db/schema";
 import { stream, streamChat } from "@/lib/stream";
 import { NextResponse, type NextRequest } from "next/server";
-import { and, eq } from "drizzle-orm";
+import { and, eq, getTableColumns } from "drizzle-orm";
 import { env } from "@/env";
 import { inngest } from "@/inngest/client";
 
@@ -61,10 +61,20 @@ export async function POST(req: NextRequest) {
         );
       }
       const existingMeeting = await db
-        .select()
+        .select({
+          ...getTableColumns(meetings),
+          agent: {
+            id: agents.id,
+            name: agents.name,
+            instructions: agents.instructions,
+            voice: agents.voice,
+          },
+        })
         .from(meetings)
+        .innerJoin(agents, eq(meetings.agentId, agents.id))
         .where(and(eq(meetings.id, meetingId), eq(meetings.status, "upcoming")))
         .then((res) => res.at(0));
+
       if (!existingMeeting) {
         return NextResponse.json(
           { error: "Meeting not found" },
@@ -80,26 +90,17 @@ export async function POST(req: NextRequest) {
         })
         .where(eq(meetings.id, existingMeeting.id));
 
-      const existingAgent = await db
-        .select()
-        .from(agents)
-        .where(eq(agents.id, existingMeeting.agentId))
-        .then((res) => res.at(0));
-
-      if (!existingAgent) {
-        return NextResponse.json({ error: "Agent not found" }, { status: 404 });
-      }
       const call = stream.video.call("default", meetingId);
       const realtimeClient = await stream.video.connectOpenAi({
         call,
         openAiApiKey: env.OPENAI_API_KEY,
-        agentUserId: existingAgent.id,
+        agentUserId: existingMeeting.agent.id,
       });
       realtimeClient.updateSession({
-        instructions: existingAgent.instructions,
+        instructions: existingMeeting.agent.instructions,
       });
       realtimeClient.updateSession({
-        voice: existingAgent.voice,
+        voice: existingMeeting.agent.voice,
       });
       break;
     }
@@ -116,6 +117,7 @@ export async function POST(req: NextRequest) {
 
       const call = stream.video.call("default", meetingId);
       await call.end();
+      break;
     }
     case "call.session_ended": {
       const event = payload as CallEndedEvent;
