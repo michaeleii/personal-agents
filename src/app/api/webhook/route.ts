@@ -97,12 +97,9 @@ export async function POST(req: NextRequest) {
         agentUserId: existingMeeting.agent.id,
       });
       realtimeClient.updateSession({
+        instructions: existingMeeting.agent.instructions,
         voice: existingMeeting.agent.voice,
       });
-      realtimeClient.updateSession({
-        instructions: existingMeeting.agent.instructions,
-      });
-      console.log(existingMeeting);
       break;
     }
     case "call.session_participant_left": {
