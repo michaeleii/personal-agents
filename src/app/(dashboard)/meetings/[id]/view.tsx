@@ -142,13 +142,17 @@ export default function MeetingView({ id, user }: Props) {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => setOpen(true)}>
+              <DropdownMenuItem
+                disabled={deleteMeeting.isPending}
+                onClick={() => setOpen(true)}
+              >
                 <PencilIcon className="size-4 text-black" />
                 Edit
               </DropdownMenuItem>
               <DropdownMenuItem
                 className="text-destructive focus:text-destructive"
                 onClick={handleDelete}
+                disabled={deleteMeeting.isPending}
               >
                 <Trash2Icon className="text-destructive size-4" />
                 Delete
