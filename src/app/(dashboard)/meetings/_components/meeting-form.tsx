@@ -44,10 +44,12 @@ export default function MeetingForm({
   const queryClient = useQueryClient();
   const createMeeting = useMutation(
     trpc.meetings.create.mutationOptions({
-      onSuccess: async () => {
-        queryClient.invalidateQueries(trpc.meetings.getMany.queryOptions({}));
+      onSuccess: async (data) => {
+        await queryClient.invalidateQueries(
+          trpc.meetings.getMany.queryOptions({})
+        );
         onSuccess?.();
-        router.push(`/meetings/${initialValues?.id}`);
+        router.push(`/meetings/${data?.id}`);
       },
       onError: (error) => {
         toast.error(error.message);
@@ -151,7 +153,7 @@ export default function MeetingForm({
                   />
                 </FormControl>
                 <FormDescription>
-                  <span>Not found what you&apos;re looking for?</span>
+                  <span>Not found what you&apos;re looking for? </span>
                   <button
                     type="button"
                     className="text-primary hover:underline"

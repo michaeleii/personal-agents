@@ -95,7 +95,6 @@ export async function POST(req: NextRequest) {
         openAiApiKey: env.OPENAI_API_KEY,
         agentUserId: existingAgent.id,
       });
-
       realtimeClient.updateSession({
         instructions: existingAgent.instructions,
       });

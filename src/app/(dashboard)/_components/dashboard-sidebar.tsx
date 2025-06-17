@@ -41,7 +41,7 @@ import {
   ChevronDownIcon,
   CreditCardIcon,
   LogOutIcon,
-  StarIcon,
+  // StarIcon,
   VideoIcon,
   type LucideIcon,
 } from "lucide-react";
@@ -67,13 +67,13 @@ const primarySection: MenuItem[] = [
   },
 ];
 
-const secondarySection: MenuItem[] = [
-  {
-    icon: StarIcon,
-    label: "Upgrade",
-    href: "/upgrade",
-  },
-];
+// const secondarySection: MenuItem[] = [
+//   {
+//     icon: StarIcon,
+//     label: "Upgrade",
+//     href: "/upgrade",
+//   },
+// ];
 
 type UserWithAnonymous = User & {
   isAnonymous?: boolean | null;
@@ -122,7 +122,7 @@ export default function DashboardSidebar({
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
-        <div className="px-4 py-2">
+        {/* <div className="px-4 py-2">
           <Separator className="text-[#5D6B68] opacity-10" />
         </div>
         <SidebarGroup>
@@ -148,7 +148,7 @@ export default function DashboardSidebar({
               ))}
             </SidebarMenu>
           </SidebarGroupContent>
-        </SidebarGroup>
+        </SidebarGroup> */}
       </SidebarContent>
       {user && (
         <SidebarFooter>
