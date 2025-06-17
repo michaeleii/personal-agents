@@ -102,6 +102,7 @@ export async function POST(req: NextRequest) {
       realtimeClient.updateSession({
         instructions: existingMeeting.agent.instructions,
       });
+      console.log(existingMeeting);
       break;
     }
     case "call.session_participant_left": {
