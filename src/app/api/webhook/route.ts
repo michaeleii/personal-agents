@@ -74,7 +74,7 @@ export async function POST(req: NextRequest) {
 
     console.log("Existing meeting:", existingMeeting);
 
-    if (!existingMeeting) {
+    if (existingMeeting === undefined) {
       return NextResponse.json({ error: "Meeting not found" }, { status: 404 });
     }
 
@@ -92,15 +92,18 @@ export async function POST(req: NextRequest) {
       openAiApiKey: env.OPENAI_API_KEY,
       agentUserId: existingMeeting.agent.id,
     });
+    console.log("Connected to OpenAI for meeting:", existingMeeting.id);
     realtimeClient.updateSession({
       instructions: existingMeeting.agent.instructions,
+    });
+    console.log(
+      "Updated agent instructions:",
+      existingMeeting.agent.instructions
+    );
+    realtimeClient.updateSession({
       voice: existingMeeting.agent.voice,
     });
-    console.log("Connected to OpenAI for meeting:", existingMeeting.id);
-    console.log({
-      voice: existingMeeting.agent.voice,
-      instructions: existingMeeting.agent.instructions,
-    });
+    console.log("Updated agent voice:", existingMeeting.agent.voice);
   } else if (eventType === "call.session_participant_left") {
     const event = payload as CallSessionParticipantLeftEvent;
     const meetingId = event.call_cid.split(":")[1];
