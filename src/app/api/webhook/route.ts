@@ -69,7 +69,7 @@ export async function POST(req: NextRequest) {
       })
       .from(meetings)
       .innerJoin(agents, eq(meetings.agentId, agents.id))
-      .where(and(eq(meetings.id, meetingId)))
+      .where(eq(meetings.id, meetingId))
       .then((res) => res.at(0));
 
     if (!existingMeeting) {
