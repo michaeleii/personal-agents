@@ -28,7 +28,7 @@ Personal Agents is a full-stack web application that transforms the way you coll
 ### Prerequisites
 
 - Node.js (v18+ recommended) or Bun
-- npm, yarn, pnpm, or bun (for package management)
+- bun (for package management)
 - A database (e.g., SQLite, PostgreSQL) configured via Drizzle ORM
 - API keys as required (see `.env`)
 
@@ -44,10 +44,6 @@ Personal Agents is a full-stack web application that transforms the way you coll
 2. **Install dependencies:**
 
    ```bash
-   npm install
-   # or
-   yarn install
-   # or
    bun install
    ```
 
@@ -58,17 +54,15 @@ Personal Agents is a full-stack web application that transforms the way you coll
 4. **Run database migrations:**
 
    ```bash
-   npx drizzle-kit push
+   bun db:push
    ```
 
 5. **Start the development server:**
 
    ```bash
-   npm run dev
-   # or
-   yarn dev
-   # or
-   bun run dev
+   bun dev
+   bun dev:background-jobs # Inngest Dev server
+   bun dev:webhook # Running ngrok to handle webhooks
    ```
 
 6. **Open the app:**
@@ -103,4 +97,4 @@ public/               # Static assets (images, favicon, etc.)
 
 ## Environment Variables
 
-Refer to the `.env.example` file for the required environment variables.
+Refer to the `env.ts` file for the required environment variables.
