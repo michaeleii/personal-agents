@@ -1,6 +1,6 @@
 # Personal Agents
 
-Personal Agents is a full-stack web application that transforms the way you collaborate with AI. Instead of your standard browser AI chatbots, this platform lets you video call with intelligent AI agents, bringing them into your meetings as real-time assistants. Experience a new era of immersive, face-to-face interaction with AI, where humans and AI work side by side to brainstorm, solve problems, and get things done.
+Instead of your standard browser AI chatbots, this platform lets you video call with intelligent AI agents, bringing them into your meetings as real-time assistants. Experience a new era of immersive, face-to-face interaction with AI, where humans and AI work side by side to brainstorm, solve problems, and get things done.
 
 ## Features
 
